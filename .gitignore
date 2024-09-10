@@ -1,0 +1,7 @@
+__pycache__
+results/
+results/*
+*.json
+models/
+*.txt
+!*_req.txt
