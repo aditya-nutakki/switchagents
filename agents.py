@@ -240,7 +240,7 @@ class BaseOpenAIAgent(BaseAgent):
                 return word_stream[y:]
 
 
-        lag_len = 3
+        lag_len = 4
 
         # record_stream, allowed_stream, word_stream = "", "", ""
         streams = {"record_stream": "", "allowed_stream": ""}
