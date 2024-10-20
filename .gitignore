@@ -5,3 +5,6 @@ results/*
 models/
 *.txt
 !*_req.txt
+*egg-info
+build/
+dist/

@@ -1,7 +1,7 @@
 from anthropic import Anthropic
 from openai import OpenAI
 
-from utils import *
+from .utils import *
 import os, json
 
 from concurrent.futures import ThreadPoolExecutor
@@ -28,7 +28,6 @@ class BaseAgent():
         self.available_models = bundle["available_models"]
         self.base_url = bundle["base_url"]
         self.is_conditional_stream = True if self.stream_def else False
-        self.lag_len = 4
 
 
     def _find_slave(self, model):
@@ -240,6 +239,9 @@ class BaseOpenAIAgent(BaseAgent):
                 streams["allowed_stream"] += word_stream[y:]
                 return word_stream[y:]
 
+
+        lag_len = 3
+
         # record_stream, allowed_stream, word_stream = "", "", ""
         streams = {"record_stream": "", "allowed_stream": ""}
         word_stream = ""
@@ -259,7 +261,7 @@ class BaseOpenAIAgent(BaseAgent):
                 total_stream.append(chunk) # present for debugging
                 word_stream += chunk
                 
-                if len(word_stream.split(" ")) >= self.lag_len:
+                if len(word_stream.split(" ")) >= lag_len:
                     # print(f"looking for {look_for_defs}")
                     analysis = analyse_stream(word_stream, self.stream_def, look_for_defs = look_for_defs, current_behaviour = current_behaviour, found_closing_tag = found_closing_tag)
                     if analysis:
@@ -526,7 +528,9 @@ class BaseClaudeAgent(BaseAgent):
                 streams["allowed_stream"] += word_stream[y:]
                 return word_stream[y:]
 
-        
+
+        lag_len = 3
+
         streams = {"record_stream": "", "allowed_stream": ""}
         word_stream = ""
         current_behaviour = self.default_behaviour
@@ -543,7 +547,7 @@ class BaseClaudeAgent(BaseAgent):
                     total_stream.append(chunk) # present for debugging
                     word_stream += chunk
                     
-                    if len(word_stream.split(" ")) >= self.lag_len:
+                    if len(word_stream.split(" ")) >= lag_len:
                         # print(f"looking for {look_for_defs}")
                         analysis = analyse_stream(word_stream, self.stream_def, look_for_defs = look_for_defs, current_behaviour = current_behaviour, found_closing_tag = found_closing_tag)
                         if analysis:
